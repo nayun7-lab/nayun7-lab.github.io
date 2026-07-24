@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERD Playground · {{COURSE}}</title>
+<script src="../site-config.js"></script>
+<script src="../config-apply.js"></script>
+<link rel="stylesheet" href="../shared.css?v=2">
+<link rel="stylesheet" href="styles/erd-playground.css">
+</head>
+<body>
+<a class="back-to-index" href="../index.html" title="실습 홈으로 돌아가기">홈</a>
+
+<main class="erd-app" aria-labelledby="app-title">
+  <header class="erd-topbar">
+    <div>
+      <p class="eyebrow" data-config="courseTitle">데이터베이스 실습</p>
+      <h1 id="app-title">ERD Playground</h1>
+    </div>
+    <div class="top-actions" aria-label="파일 작업">
+      <a class="index-action" href="../index.html">실습 홈으로 돌아가기</a>
+      <label class="file-button">
+        JSON 가져오기
+        <input id="importFile" type="file" accept="application/json,.json">
+      </label>
+      <button id="exportJsonBtn" type="button">JSON 저장</button>
+      <button id="exportPngBtn" type="button" class="primary">PNG 저장</button>
+    </div>
+  </header>
+
+  <section class="tool-strip" aria-label="ERD 도구">
+    <button id="addEntityBtn" type="button">엔티티 추가</button>
+    <button id="addRelationBtn" type="button">관계 추가</button>
+    <button id="deleteBtn" type="button" class="danger">선택 삭제</button>
+    <span class="divider" aria-hidden="true"></span>
+    <button type="button" data-sample="school">학생-과목-수강</button>
+    <button type="button" data-sample="library">도서관 대출</button>
+    <button type="button" data-sample="club">동아리 가입</button>
+    <button id="resetBtn" type="button">초기화</button>
+  </section>
+
+  <section class="workspace">
+    <aside class="panel left-panel" aria-label="설계 점검">
+      <h2>검토</h2>
+      <div id="validationList" class="validation-list" aria-live="polite"></div>
+
+      <h2>산출물</h2>
+      <p class="panel-help">정의서 초안은 현재 ERD에서 자동 생성됩니다. 수업 제출 전 설명과 제약 조건을 보완하세요.</p>
+      <button id="copySpecBtn" type="button">정의서 초안 복사</button>
+      <textarea id="specOutput" class="spec-output" readonly aria-label="테이블 정의서 초안"></textarea>
+    </aside>
+
+    <section class="canvas-shell" aria-label="ERD 캔버스">
+      <div class="canvas-hint">엔티티를 클릭해 편집하고 드래그해 배치합니다. 관계 선을 클릭하면 카디널리티를 바꿀 수 있습니다.</div>
+      <svg id="erdCanvas" class="erd-canvas" role="img" aria-label="ERD 다이어그램"></svg>
+    </section>
+
+    <aside class="panel editor-panel" aria-label="선택 항목 편집">
+      <div id="emptyEditor" class="empty-editor">
+        <h2>선택 없음</h2>
+        <p>엔티티 또는 관계를 선택하면 이름, 속성, 카디널리티를 편집할 수 있습니다.</p>
+      </div>
+
+      <form id="entityEditor" class="editor hidden">
+        <h2>엔티티</h2>
+        <p class="panel-help">FK는 키를 <strong>FK</strong> 또는 <strong>PK/FK</strong>로 바꾼 뒤 참조 엔티티와 참조 컬럼을 지정합니다.</p>
+        <label>이름
+          <input id="entityName" type="text" autocomplete="off">
+        </label>
+        <div class="editor-row">
+          <h3>속성</h3>
+          <button id="addColumnBtn" type="button">속성 추가</button>
+        </div>
+        <div id="columnList" class="column-list"></div>
+      </form>
+
+      <form id="relationEditor" class="editor hidden">
+        <h2>관계</h2>
+        <label>관계명
+          <input id="relationName" type="text" autocomplete="off">
+        </label>
+        <div class="two-col">
+          <label>시작 엔티티
+            <select id="relationFrom"></select>
+          </label>
+          <label>끝 엔티티
+            <select id="relationTo"></select>
+          </label>
+        </div>
+        <div class="two-col">
+          <label>시작 카디널리티
+            <select id="relationFromCard">
+              <option value="1">1</option>
+              <option value="0..1">0..1</option>
+              <option value="N">N</option>
+              <option value="0..N">0..N</option>
+            </select>
+          </label>
+          <label>끝 카디널리티
+            <select id="relationToCard">
+              <option value="1">1</option>
+              <option value="0..1">0..1</option>
+              <option value="N">N</option>
+              <option value="0..N">0..N</option>
+            </select>
+          </label>
+        </div>
+        <label class="check-row">
+          <input id="relationIdentifying" type="checkbox">
+          식별 관계로 표시
+        </label>
+      </form>
+    </aside>
+  </section>
+</main>
+
+<script defer src="app/erd-playground.js"></script>
+</body>
+</html>

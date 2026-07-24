@@ -1,10 +1,358 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>내 웹사이트</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{COURSE}}</title>
+<script src="./site-config.js"></script>
+<script src="./config-apply.js"></script>
+<link rel="stylesheet" href="./shared.css?v=2">
+<style>
+  :root {
+    --hero-deep: var(--base);
+    --console-ink: #171B21;
+    --console-ink-2: #1F242C;
+    --console-text: #E8ECF1;
+    --console-dim: #8B95A3;
+    --sql-kw: #9CC1E8;   /* fallback */
+    --sql-id: #EBD9A8;   /* fallback */
+  }
+  @supports (color: color-mix(in srgb, red 50%, white)) {
+    :root {
+      --hero-deep: color-mix(in srgb, var(--base) 78%, black);
+      --sql-kw: color-mix(in srgb, var(--base) 30%, #CFE3F7);
+      --sql-id: color-mix(in srgb, var(--point) 45%, #F4E9CF);
+    }
+  }
+
+  body { background: var(--light); }
+
+  /* ── Hero ─────────────────────────────────────────── */
+  .hub-hero {
+    background: linear-gradient(168deg, var(--base) 30%, var(--hero-deep) 100%);
+    color: var(--white);
+    text-align: center;
+    padding: 4.2rem 1.5rem 7.5rem;
+  }
+  .hub-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    opacity: 0.7;
+    margin-bottom: 1.1rem;
+  }
+  .hub-hero h1 {
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+  .hub-subtitle {
+    font-size: 1.02rem;
+    opacity: 0.82;
+    max-width: 620px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.75;
+  }
+  .hub-meta {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    padding: 0.42rem 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 999px;
+    opacity: 0.92;
+    margin-bottom: 0;
+  }
+
+  /* ── Console (signature) ──────────────────────────── */
+  .console {
+    max-width: 880px;
+    margin: -5.2rem auto 0;
+    padding: 0 1.25rem;
+  }
+  .console-window {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -18px rgba(9, 14, 22, 0.45);
+    border: 1px solid rgba(9, 14, 22, 0.28);
+  }
+  .editor-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--console-ink-2);
+    color: var(--console-dim);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    padding: 0.55rem 1.1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .editor-body {
+    background: var(--console-ink);
+    color: var(--console-text);
+    font-family: var(--font-mono);
+    font-size: clamp(0.86rem, 2.4vw, 1rem);
+    line-height: 1.85;
+    padding: 1.2rem 1.4rem 1.3rem;
+    white-space: pre-wrap;
+    word-break: keep-all;
+    min-height: 5.6em;
+  }
+  .editor-body .kw { color: var(--sql-kw); font-weight: 600; }
+  .editor-body .id { color: var(--sql-id); }
+  .editor-body .caret {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.15em;
+    margin-left: 1px;
+    background: var(--console-text);
+    vertical-align: text-bottom;
+    animation: caret-blink 1s steps(1) infinite;
+  }
+  @keyframes caret-blink { 50% { opacity: 0; } }
+
+  /* ── Result rows ──────────────────────────────────── */
+  .result {
+    background: var(--white);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .result-meta {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--gray);
+    letter-spacing: 0.06em;
+    padding: 0.7rem 1.25rem 0.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .tool-row {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr auto auto;
+    align-items: center;
+    gap: 0 1rem;
+    padding: 1.05rem 1.25rem 1.05rem 0;
+    color: inherit;
+    border-bottom: 1px solid var(--line);
+    box-shadow: inset 3px 0 0 transparent;
+    transition: background 0.16s var(--ease), box-shadow 0.16s var(--ease);
+  }
+  .tool-row:last-child { border-bottom: none; }
+  .tool-row:hover, .tool-row:focus-visible {
+    background: var(--base-pale);
+    box-shadow: inset 3px 0 0 var(--point);
+    color: inherit;
+  }
+  .tool-row:focus-visible {
+    outline: 2px solid var(--point);
+    outline-offset: -2px;
+  }
+  .row-num {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--point);
+    text-align: center;
+  }
+  .row-main { min-width: 0; }
+  .row-title {
+    display: block;
+    font-weight: 700;
+    font-size: 1.02rem;
+    color: var(--base);
+    margin-bottom: 0.12rem;
+  }
+  .row-desc {
+    display: block;
+    font-size: 0.86rem;
+    color: var(--gray);
+    line-height: 1.55;
+    word-break: keep-all;
+  }
+  .row-type {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--point);
+    background: var(--point-pale);
+    border: 1px solid var(--point-light);
+    border-radius: 999px;
+    padding: 0.18rem 0.65rem;
+    white-space: nowrap;
+  }
+  .row-go {
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    color: var(--gray);
+    transition: transform 0.16s var(--ease), color 0.16s var(--ease);
+  }
+  .tool-row:hover .row-go { transform: translateX(3px); color: var(--point); }
+
+  /* 행 등장 애니메이션 — JS가 animating 클래스를 붙였을 때만 적용 */
+  .result.animating .tool-row {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  .result.animating.enter .tool-row {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease),
+                background 0.16s var(--ease), box-shadow 0.16s var(--ease);
+  }
+  .result.animating.enter .tool-row:nth-child(2) { transition-delay: 0.07s; }
+  .result.animating.enter .tool-row:nth-child(3) { transition-delay: 0.14s; }
+  .result.animating.enter .tool-row:nth-child(4) { transition-delay: 0.21s; }
+  .result.animating.enter .tool-row:nth-child(5) { transition-delay: 0.28s; }
+
+  /* ── Footer ───────────────────────────────────────── */
+  .hub-footer {
+    text-align: center;
+    padding: 2.6rem 1.5rem 2.8rem;
+  }
+  .hub-footer p {
+    font-size: 0.84rem;
+    color: var(--gray);
+    margin-bottom: 0.3rem;
+  }
+
+  /* ── Responsive ───────────────────────────────────── */
+  @media (max-width: 640px) {
+    .hub-hero { padding-bottom: 6.4rem; }
+    .console { margin-top: -4.4rem; }
+    .tool-row {
+      grid-template-columns: 2.4rem 1fr auto;
+      row-gap: 0.4rem;
+    }
+    .row-type { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editor-body .caret { animation: none; }
+    .tool-row, .row-go { transition: none; }
+  }
+</style>
 </head>
 <body>
-    <h1>안녕하세요! 임윤택의 웹페이지입니다.</h1>
+
+<header class="hub-hero">
+  <p class="hub-eyebrow" data-config="schoolName">학교 이름</p>
+  <h1 data-config="courseTitle">데이터베이스 실습</h1>
+  <p class="hub-subtitle" data-config="siteSubtitle">설치 없이 브라우저에서 바로 실행하는 SQL·ERD 실습 도구입니다.</p>
+  <p class="hub-meta" data-config="metaLine">담당 교사 · 학기</p>
+</header>
+
+<main class="console">
+  <div class="console-window">
+    <div class="editor-bar">
+      <span>실습.sql</span>
+      <span>SQLite · 브라우저에서 실행</span>
+    </div>
+    <div class="editor-body" id="sql-editor"><span class="kw">SELECT</span> <span class="id">도구</span>, <span class="id">설명</span>
+<span class="kw">FROM</span> <span class="id">실습_도구</span>
+<span class="kw">ORDER BY</span> <span class="id">학습_순서</span>;</div>
+
+    <nav class="result" id="result" aria-label="실습 도구 목록">
+      <p class="result-meta">→ 4 rows · 학습 순서대로 정렬됨</p>
+
+      <a class="tool-row" href="./sql-tutorial/index.html">
+        <span class="row-num">01</span>
+        <span class="row-main">
+          <span class="row-title">SQL Tutorial</span>
+          <span class="row-desc">SELECT부터 WHERE, 정렬, JOIN, 집계까지 — 설명을 읽고 예제를 바로 실행하며 순서대로 익힙니다.</span>
+        </span>
+        <span class="row-type">단계별 학습</span>
+        <span class="row-go" aria-hidden="true">→</span>
+      </a>
+
+      <a class="tool-row" href="./playground/index.html">
+        <span class="row-num">02</span>
+        <span class="row-main">
+          <span class="row-title">SQL Playground</span>
+          <span class="row-desc">가상 학교 데이터셋이 적재된 SQLite에서 자유롭게 쿼리를 실행합니다. 표·차트·ERD 보기와 CSV 업로드를 지원합니다.</span>
+        </span>
+        <span class="row-type">자유 실습</span>
+        <span class="row-go" aria-hidden="true">→</span>
+      </a>
+
+      <a class="tool-row" href="./playground/index.html?mode=empty">
+        <span class="row-num">03</span>
+        <span class="row-main">
+          <span class="row-title">SQL Playground — 빈 DB 모드</span>
+          <span class="row-desc">데이터가 없는 빈 데이터베이스에서 CREATE TABLE로 테이블을 직접 설계하고 INSERT로 채웁니다.</span>
+        </span>
+        <span class="row-type">스키마 실습</span>
+        <span class="row-go" aria-hidden="true">→</span>
+      </a>
+
+      <a class="tool-row" href="./erd-playground/index.html">
+        <span class="row-num">04</span>
+        <span class="row-main">
+          <span class="row-title">ERD Playground</span>
+          <span class="row-desc">엔티티와 관계를 마우스로 그리며 설계합니다. 자동 점검, 테이블 정의서 초안, PNG·JSON 저장을 지원합니다.</span>
+        </span>
+        <span class="row-type">설계 실습</span>
+        <span class="row-go" aria-hidden="true">→</span>
+      </a>
+    </nav>
+  </div>
+</main>
+
+<footer class="hub-footer">
+  <p data-config="footerLine">학교 · 담당 교사 · 학기</p>
+  <p data-config="footerNote">실습 데이터는 가상으로 생성된 교육용 데이터입니다.</p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var editor = document.getElementById("sql-editor");
+  var result = document.getElementById("result");
+  if (reduced || !editor || !result) return;
+
+  // 미리 렌더된 쿼리를 토큰 목록으로 바꾼 뒤 지우고 다시 타이핑한다.
+  // (JS가 없거나 축소 동작 모드면 정적 쿼리가 그대로 보인다.)
+  var tokens = [];
+  editor.childNodes.forEach(function (node) {
+    if (node.nodeType === Node.TEXT_NODE) tokens.push({ text: node.textContent, cls: null });
+    else tokens.push({ text: node.textContent, cls: node.className });
+  });
+
+  result.classList.add("animating");
+  editor.textContent = "";
+  var caret = document.createElement("span");
+  caret.className = "caret";
+  editor.appendChild(caret);
+
+  var ti = 0, ci = 0, span = null;
+  function typeNext() {
+    if (ti >= tokens.length) {
+      setTimeout(function () {
+        caret.remove();
+        result.classList.add("enter");
+      }, 220);
+      return;
+    }
+    var tok = tokens[ti];
+    if (ci === 0) {
+      if (tok.cls) {
+        span = document.createElement("span");
+        span.className = tok.cls;
+        editor.insertBefore(span, caret);
+      } else {
+        span = document.createTextNode("");
+        editor.insertBefore(span, caret);
+      }
+    }
+    span.textContent += tok.text[ci];
+    ci++;
+    if (ci >= tok.text.length) { ti++; ci = 0; }
+    setTimeout(typeNext, 16);
+  }
+  setTimeout(typeNext, 250);
+})();
+</script>
+
 </body>
 </html>

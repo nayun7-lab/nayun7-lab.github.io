@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQL Tutorial · {{COURSE}}</title>
+<script src="../site-config.js"></script>
+<script src="../config-apply.js"></script>
+<link rel="stylesheet" href="../shared.css?v=2">
+<link rel="stylesheet" href="./styles/sql-tutorial.css">
+</head>
+<body class="tutorial-body">
+
+<nav aria-label="실습 홈">
+  <a class="back-to-index" href="../index.html" title="실습 홈으로 돌아가기">홈</a>
+</nav>
+
+<header class="tutorial-hero">
+  <div class="tutorial-hero-inner">
+    <span class="week-badge">단계별 SQL 학습 도구</span>
+    <h1>SQL Tutorial</h1>
+    <p>한국고등학교 데이터셋으로 SQL 기본기를 순서대로 익힙니다. 각 단원은 짧은 설명, 실행 가능한 예제, 확인 질문으로 구성되어 있어 페이지를 위에서부터 읽고 실행하는 것만으로 수업 흐름을 따라갈 수 있습니다.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#lessons">튜토리얼 시작</a>
+      <a class="btn-secondary" href="../playground/index.html">자유 실습으로 이동</a>
+    </div>
+  </div>
+</header>
+
+<main class="tutorial-main">
+  <section class="boot-panel" aria-live="polite">
+    <div>
+      <h2>실습 환경</h2>
+      <p id="status">SQLite 엔진과 한국고등학교 seed 데이터를 불러오는 중...</p>
+    </div>
+    <dl class="boot-meta">
+      <dt>데이터셋</dt><dd>한국고등학교</dd>
+      <dt>엔진</dt><dd>SQLite WASM</dd>
+      <dt>저장</dt><dd id="vfs-info">확인 중</dd>
+    </dl>
+  </section>
+
+  <section class="guide-section">
+    <div class="guide-card">
+      <h2>학습 순서</h2>
+      <p>SQL은 한 번에 외우는 언어가 아니라, 작은 조회를 반복하면서 문장 구조를 익히는 언어입니다. 이 튜토리얼에서는 먼저 행과 열을 고르고, 조건을 붙이고, 정렬한 뒤, 여러 테이블을 연결하고 집계하는 순서로 진행합니다.</p>
+    </div>
+    <div class="guide-card">
+      <h2>데이터 모델</h2>
+      <p>주요 테이블은 <code>students</code>, <code>teachers</code>, <code>classes</code>, <code>courses</code>, <code>scores</code>, <code>clubs</code>, <code>club_members</code>, <code>books</code>, <code>book_loans</code>입니다. 컬럼명은 실제 수업 자료와 맞추기 위해 한국어를 사용합니다.</p>
+    </div>
+  </section>
+
+  <section class="schema-section">
+    <div class="section-heading">
+      <h2>스키마 한눈에 보기</h2>
+      <p>각 테이블의 대표 컬럼입니다. 더 자유로운 탐색은 SQL Playground에서 이어서 할 수 있습니다.</p>
+    </div>
+    <div class="schema-grid" id="schema-grid">
+      <p class="muted">스키마를 불러오는 중...</p>
+    </div>
+  </section>
+
+  <section class="lesson-section" id="lessons">
+    <div class="section-heading">
+      <h2>단계별 실습</h2>
+      <p>코드는 직접 수정할 수 있습니다. 실행 결과가 예상과 다르면 설명을 다시 읽고 조건, 조인 기준, 그룹 기준을 하나씩 확인하세요.</p>
+    </div>
+    <div class="lesson-list" id="lesson-list"></div>
+  </section>
+</main>
+
+<footer class="page-footer">
+  <p><span data-config="footerNote">실습 데이터는 가상으로 생성된 교육용 데이터입니다.</span> · <a href="../index.html">실습 홈으로 돌아가기</a> · <a href="../playground/index.html">SQL Playground</a></p>
+  <p data-config="footerLine"></p>
+</footer>
+
+<script type="module" src="./app/tutorial.js?v=3"></script>
+</body>
+</html>

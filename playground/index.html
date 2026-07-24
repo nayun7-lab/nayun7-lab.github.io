@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQL Playground · {{COURSE}}</title>
+<script src="../site-config.js"></script>
+<script src="../config-apply.js"></script>
+<link rel="stylesheet" href="../shared.css?v=2">
+<link rel="stylesheet" href="./styles/playground.css">
+</head>
+<body class="playground-body">
+
+<nav aria-label="실습 홈">
+<a class="back-to-index" href="../index.html" title="실습 홈으로 돌아가기">홈</a>
+</nav>
+
+<header class="playground-hero">
+    <div class="hero-inner">
+        <span class="week-badge" id="mode-badge">실습 도구</span>
+        <h1>SQL Playground</h1>
+        <p class="hero-subtitle" id="mode-subtitle">한국고등학교 데이터셋이 미리 적재되어 있습니다. 자유롭게 쿼리를 작성하고 실행하세요. 모든 작업은 브라우저 안에서만 일어나며 데이터는 외부로 전송되지 않습니다.</p>
+    </div>
+</header>
+
+<main class="playground-main">
+
+    <section class="boot-status reveal" id="status-section">
+        <div class="status-card" id="boot-card">
+            <p class="status-line" id="status" data-kind="loading">SQLite 엔진을 불러오는 중…</p>
+            <dl class="status-meta">
+                <dt>로딩 시간</dt><dd id="elapsed">—</dd>
+                <dt>총 행 수</dt><dd id="total-rows">—</dd>
+                <dt>저장 방식</dt><dd id="vfs-info">—</dd>
+            </dl>
+        </div>
+    </section>
+
+    <div class="workspace-grid">
+        <aside class="schema-aside reveal" id="schema-mount">
+            <p class="schema-empty">스키마 로딩 중…</p>
+        </aside>
+
+        <div class="workspace-main">
+            <section class="editor-section reveal">
+                <div class="editor-header">
+                    <h2 class="section-title">SQL 편집기</h2>
+                    <div class="editor-actions">
+                        <label for="example-select" class="control-label">예제</label>
+                        <select id="example-select" disabled class="btn-secondary" title="예제 쿼리 불러오기">
+                            <option value="">예제 불러오기…</option>
+                        </select>
+                        <button id="csv-btn"     disabled class="btn-secondary" title="CSV 파일 업로드">CSV 업로드</button>
+                        <span class="dropdown-wrap">
+                            <button id="import-btn"  disabled class="btn-secondary" title="DB 파일·SQL 스크립트·쿼리 파일 불러오기">가져오기 ▾</button>
+                            <div id="import-menu" class="dropdown-menu" hidden>
+                                <button type="button" data-imp="db">.sqlite DB 열기 (현재 DB 교체)</button>
+                                <button type="button" data-imp="script">.sql 스크립트 실행</button>
+                                <button type="button" data-imp="queries">쿼리 파일을 편집기 탭으로 열기</button>
+                            </div>
+                        </span>
+                        <span class="dropdown-wrap">
+                            <button id="export-btn"  disabled class="btn-secondary" title="현재 DB 또는 쿼리 탭을 파일로 저장">내보내기 ▾</button>
+                            <div id="export-menu" class="dropdown-menu" hidden>
+                                <button type="button" data-fmt="sqlite">DB를 .sqlite 파일로 저장</button>
+                                <button type="button" data-fmt="sql">DB를 .sql 스크립트로 저장</button>
+                                <button type="button" data-fmt="queries">쿼리 탭 전체를 .sql로 저장</button>
+                            </div>
+                        </span>
+                        <button id="share-btn"   disabled class="btn-secondary" title="현재 쿼리들을 URL로 공유">공유</button>
+                        <button id="reset-btn"   disabled class="btn-secondary" title="현재 모드의 초기 상태로 되돌리기">초기화</button>
+                        <button id="run-btn"     disabled class="btn-primary"   title="Ctrl/Cmd + Enter">실행 ▶</button>
+                        <input type="file" id="csv-file" accept=".csv,text/csv" hidden>
+                        <input type="file" id="import-db-file"      accept=".sqlite,.db,.sqlite3,application/x-sqlite3" hidden>
+                        <input type="file" id="import-sql-file"     accept=".sql,text/plain" hidden>
+                        <input type="file" id="import-queries-file" accept=".sql,text/plain" hidden>
+                    </div>
+                </div>
+                <div id="tabs-mount" class="tabs-mount"></div>
+                <div id="editor-mount" class="editor-mount"></div>
+                <p class="editor-hint">Ctrl + Enter (Mac: Cmd + Enter) 로 실행 · 컬럼 이름은 자동 완성됩니다 (Ctrl + Space) · 탭은 더블클릭으로 이름 변경 · 스키마 항목을 클릭하면 이름이 편집기에 삽입됩니다.</p>
+            </section>
+
+            <section class="result-section reveal">
+                <div class="result-tabs">
+                    <button id="result-tab-table" class="result-tab active" type="button">결과</button>
+                    <button id="result-tab-chart" class="result-tab" type="button">차트</button>
+                    <button id="result-tab-erd"   class="result-tab" type="button">ERD</button>
+                    <span class="result-tab-spacer"></span>
+                    <button id="result-csv-btn" class="btn-secondary btn-sm" hidden title="현재 결과를 CSV로 저장">CSV 저장</button>
+                </div>
+                <div id="error-mount" class="error-card" hidden></div>
+                <div id="result-mount" class="result-mount">
+                    <p class="result-empty">쿼리를 실행하면 여기에 결과가 표시됩니다.</p>
+                </div>
+                <div id="chart-mount" class="chart-mount" hidden></div>
+                <div id="erd-mount"   class="erd-mount"   hidden></div>
+            </section>
+        </div>
+    </div>
+
+</main>
+
+<footer class="page-footer">
+    <p><span data-config="footerNote">실습 데이터는 가상으로 생성된 교육용 데이터입니다.</span> · <a href="../index.html">실습 홈으로 돌아가기</a></p>
+    <p data-config="footerLine"></p>
+</footer>
+
+<script type="module" src="./app/main.js?v=3"></script>
+
+</body>
+</html>
